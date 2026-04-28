@@ -1,4 +1,4 @@
-<!-- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -439,19 +439,18 @@
 </head>
 <body>
     <div class="container">
-        <!-- Header --><!--
+        <!-- Header -->
         <div class="header">
             <h1>Cloud-Native Microservices Architecture</h1>
             <p>Interactive Simulation: Event Management System</p>
         </div>
-          
-<!--
-         Architecture Section -->
-      <!--  <div class="architecture-section">
+
+        <!-- Architecture Section -->
+        <div class="architecture-section">
             <h2>Containerized Services (Docker)</h2>
             
             <div class="services-grid">
-                <!-- User Service --
+                <!-- User Service -->
                 <div class="service-card" id="userService">
                     <div class="service-icon">👤</div>
                     <div class="service-name">User Service</div>
@@ -470,7 +469,7 @@
                     </div>
                 </div>
 
-                <!-- Event Service --
+                <!-- Event Service -->
                 <div class="service-card" id="eventService">
                     <div class="service-icon">📅</div>
                     <div class="service-name">Event Service</div>
@@ -489,7 +488,7 @@
                     </div>
                 </div>
 
-                <!-- Task Assignment Service --
+                <!-- Task Assignment Service -->
                 <div class="service-card" id="taskService">
                     <div class="service-icon">📋</div>
                     <div class="service-name">Task Assignment Service</div>
@@ -510,7 +509,7 @@
             </div>
         </div>
 
-        <!-- Control Section --
+        <!-- Control Section -->
         <div class="control-section">
             <div class="control-title">Interactive Demo Controls</div>
             
@@ -546,11 +545,11 @@
 
         // Utility: Update Service Status
         function updateServiceStatus(serviceName, status) {
-            const statusLight = document.getElementById(`${serviceName}Status`);
-            const statusText = document.getElementById(`${serviceName}StatusText`);
-            const apiIcon = document.getElementById(`${serviceName}ApiIcon`);
-            const apiText = document.getElementById(`${serviceName}ApiText`);
-            const card = document.getElementById(`${serviceName}Service`);
+            const statusLight = document.getElementById(serviceName + 'Status');
+            const statusText = document.getElementById(serviceName + 'StatusText');
+            const apiIcon = document.getElementById(serviceName + 'ApiIcon');
+            const apiText = document.getElementById(serviceName + 'ApiText');
+            const card = document.getElementById(serviceName + 'Service');
 
             if (status === 'loading') {
                 statusLight.classList.add('loading');
@@ -590,29 +589,27 @@
             if (state.isLoading) return;
 
             state.isLoading = true;
-            state.taskServiceCrashed = false; // Reset crash state
+            state.taskServiceCrashed = false;
             resetAllServices();
             updateInfoPanel('🔄 Initiating request to all services...');
 
-            // Set loading state for all services
             updateServiceStatus('user', 'loading');
             updateServiceStatus('event', 'loading');
             updateServiceStatus('task', 'loading');
 
-            // Simulate API calls with random delays
-            setTimeout(() => {
+            setTimeout(function() {
                 updateServiceStatus('user', 'healthy');
                 updateInfoPanel('✓ User Service responded with user data (ID: U-12345)');
                 state.apiResponses.user = { id: 'U-12345', name: 'John Doe' };
             }, 800);
 
-            setTimeout(() => {
+            setTimeout(function() {
                 updateServiceStatus('event', 'healthy');
                 updateInfoPanel('✓ Event Service responded with event data (8 upcoming events)');
                 state.apiResponses.event = { events: 8, nextEvent: 'Tech Conference 2024' };
             }, 1200);
 
-            setTimeout(() => {
+            setTimeout(function() {
                 if (!state.taskServiceCrashed) {
                     updateServiceStatus('task', 'healthy');
                     updateInfoPanel('✓ Task Assignment Service responded (5 active tasks assigned)');
@@ -621,7 +618,7 @@
                 }
             }, 1600);
 
-            setTimeout(() => {
+            setTimeout(function() {
                 if (!state.isLoading) {
                     updateInfoPanel('✅ All services responded successfully! This demonstrates stateless, independent services communicating via REST APIs.');
                 }
@@ -647,21 +644,20 @@
             state.isLoading = true;
             updateInfoPanel('🛡️ Testing fault tolerance: Requesting data while Task Service is offline...');
 
-            // Set loading for healthy services only
             updateServiceStatus('user', 'loading');
             updateServiceStatus('event', 'loading');
 
-            setTimeout(() => {
+            setTimeout(function() {
                 updateServiceStatus('user', 'healthy');
                 updateInfoPanel('✓ User Service: Still responding perfectly! (Isolated failure - no impact)');
             }, 900);
 
-            setTimeout(() => {
+            setTimeout(function() {
                 updateServiceStatus('event', 'healthy');
                 updateInfoPanel('✓ Event Service: Also responding! Task Service failure does NOT cascade.');
             }, 1400);
 
-            setTimeout(() => {
+            setTimeout(function() {
                 updateInfoPanel('🎯 Fault Tolerance Demonstrated:\n✅ User Service: Healthy\n✅ Event Service: Healthy\n❌ Task Service: Offline (isolated)\n\nKey Insight: Services are loosely coupled. One failure doesn\'t bring down the entire system!');
                 state.isLoading = false;
             }, 1800);
@@ -677,214 +673,13 @@
 
         // Update info panel
         function updateInfoPanel(message) {
-            document.getElementById('infoPanel').innerHTML = `<strong>Live Demo:</strong> ${message}`;
+            document.getElementById('infoPanel').innerHTML = '<strong>Live Demo:</strong> ' + message;
         }
 
         // Initialize
-        window.addEventListener('load', () => {
+        window.addEventListener('load', function() {
             resetAllServices();
         });
-    </script>
-</body>
-</html> -->
-
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Native Architecture Demo</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            background-color: #f4f7f6;
-            color: #333;
-            text-align: center;
-            padding: 40px 20px;
-        }
-        .header-container {
-            margin-bottom: 40px;
-        }
-        .architecture {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            flex-wrap: wrap;
-            margin-bottom: 40px;
-        }
-        .microservice {
-            background: white;
-            border-radius: 20px;
-            padding: 30px 20px;
-            width: 220px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
-            transition: all 0.4s ease;
-            border-top: 5px solid #a2d2ff;
-            position: relative;
-        }
-        .microservice h3 {
-            margin: 0 0 10px 0;
-            color: #2b2d42;
-        }
-        .microservice p {
-            font-size: 14px;
-            color: #6c757d;
-            margin-bottom: 20px;
-        }
-        .status-icon {
-            font-size: 40px;
-            margin-bottom: 10px;
-        }
-        .status-text {
-            font-weight: 600;
-            padding: 6px 15px;
-            border-radius: 20px;
-            background-color: #e8f8f5;
-            color: #20c997;
-            font-size: 14px;
-        }
-        .offline {
-            border-top-color: #ff6b6b;
-            background-color: #fff5f5;
-        }
-        .offline .status-text {
-            background-color: #ffe3e3;
-            color: #ff6b6b;
-        }
-        .controls {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-        button {
-            padding: 12px 25px;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s, background 0.2s;
-        }
-        button:hover { transform: translateY(-2px); }
-        .btn-primary { background: #4a4e69; color: white; }
-        .btn-danger { background: #ff6b6b; color: white; }
-        .btn-success { background: #20c997; color: white; }
-        
-        .system-message {
-            font-size: 18px;
-            font-weight: bold;
-            height: 30px;
-            color: #4a4e69;
-            margin-top: 20px;
-            transition: color 0.3s;
-        }
-        
-        .loading {
-            animation: pulse 1s infinite;
-        }
-        @keyframes pulse {
-            0% { opacity: 1; transform: scale(0.98); }
-            50% { opacity: 0.8; transform: scale(1.02); }
-            100% { opacity: 1; transform: scale(0.98); }
-        }
-    </style>
-</head>
-<body>
-
-    <div class="header-container">
-        <h1>Cloud-Native App Demo</h1>
-        <p>Microservices Architecture Simulation</p>
-    </div>
-
-    <div class="architecture">
-        <div id="userService" class="microservice">
-            <div class="status-icon" id="userIcon">👤</div>
-            <h3>Container 1: Users</h3>
-            <p>User Profiles & Authentication</p>
-            <div class="status-text" id="userStatus">Online</div>
-        </div>
-
-        <div id="orderService" class="microservice">
-            <div class="status-icon" id="orderIcon">🛒</div>
-            <h3>Container 2: Orders</h3>
-            <p>Checkout & Order History</p>
-            <div class="status-text" id="orderStatus">Online</div>
-        </div>
-
-        <div id="inventoryService" class="microservice">
-            <div class="status-icon" id="inventoryIcon">📦</div>
-            <h3>Container 3: Inventory</h3>
-            <p>Product Stock Tracking</p>
-            <div class="status-text" id="inventoryStatus">Online</div>
-        </div>
-    </div>
-
-    <div class="controls">
-        <button class="btn-primary" onclick="simulateTraffic()">1. Normal API Request</button>
-        <button class="btn-danger" onclick="crashOrderService()">2. Crash Orders Container</button>
-        <button class="btn-success" onclick="testFaultTolerance()">3. Test Fault Tolerance</button>
-    </div>
-
-    <div class="system-message" id="messageBox">System Ready. All Docker containers running smoothly.</div>
-
-    <script>
-        let isOrderOnline = true;
-
-        function updateUI(id, icon, statusText, isOnline, isAction = false) {
-            const card = document.getElementById(id + 'Service');
-            const iconEl = document.getElementById(id + 'Icon');
-            const statusEl = document.getElementById(id + 'Status');
-            
-            if (isAction && isOnline) {
-                iconEl.innerText = '✅';
-                card.classList.add('loading');
-                setTimeout(() => {
-                    iconEl.innerText = id === 'user' ? '👤' : id === 'order' ? '🛒' : '📦';
-                    card.classList.remove('loading');
-                }, 1500);
-            } else if (!isOnline) {
-                card.classList.add('offline');
-                iconEl.innerText = '❌';
-                statusEl.innerText = 'Offline';
-            }
-        }
-
-        function simulateTraffic() {
-            const msg = document.getElementById('messageBox');
-            msg.style.color = '#4a4e69';
-            msg.innerText = "Processing request... Communicating via REST APIs...";
-            
-            updateUI('user', '✅', 'Online', true, true);
-            updateUI('inventory', '✅', 'Online', true, true);
-            
-            if (isOrderOnline) {
-                updateUI('order', '✅', 'Online', true, true);
-                setTimeout(() => msg.innerText = "Success: Data fetched from all Microservices! 🎉", 1500);
-            }
-        }
-
-        function crashOrderService() {
-            isOrderOnline = false;
-            updateUI('order', '❌', 'Offline', false, false);
-            document.getElementById('messageBox').style.color = '#ff6b6b';
-            document.getElementById('messageBox').innerText = "CRITICAL: Orders Container has crashed!";
-        }
-
-        function testFaultTolerance() {
-            const msg = document.getElementById('messageBox');
-            msg.style.color = '#4a4e69';
-            msg.innerText = "User opening app while Orders service is down...";
-            
-            updateUI('user', '✅', 'Online', true, true);
-            updateUI('inventory', '✅', 'Online', true, true);
-            
-            setTimeout(() => {
-                msg.style.color = '#d35400';
-                msg.innerText = "FAULT TOLERANCE ACTIVE: App is up! Users can login and browse products, even though Orders are down. 🛡️";
-            }, 1500);
-        }
     </script>
 </body>
 </html>
