@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloud-Native Microservices Architecture Demo</title>
+    <style>
+        :root {
+            --primary-dark: #0f172a;
+            --primary-light: #1e293b;
+            --card-bg: #1a2332;
+            --accent-blue: #0ea5e9;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --accent-yellow: #f59e0b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --border-color: #334155;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--primary-dark) 0%, #1a2d4d 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        .comparison-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .comparison-card {
+            background: rgba(26, 35, 50, 0.8);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            animation: fadeInUp 0.8s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .comparison-card:nth-child(1) { animation-delay: 0.1s; }
+        .comparison-card:nth-child(2) { animation-delay: 0.2s; }
+
+        .comparison-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            color: var(--accent-yellow);
+        }
+
+        .comparison-card ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .comparison-card li {
+            padding: 0.5rem 0;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .comparison-card li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: var(--accent-blue);
+        }
+
+        .architecture-section h2 {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            color: var(--accent-green);
+            text-align: center;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .service-card {
+            background: linear-gradient(135deg, var(--card-bg), rgba(26, 35, 50, 0.6));
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: fadeInUp 0.8s ease-out;
+            animation-fill-mode: both;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-card:nth-child(1) { animation-delay: 0.3s; }
+        .service-card:nth-child(2) { animation-delay: 0.4s; }
+        .service-card:nth-child(3) { animation-delay: 0.5s; }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-green));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.6s ease;
+        }
+
+        .service-card.active::before {
+            transform: scaleX(1);
+        }
+
+        .service-card.crashed {
+            border-color: var(--accent-red);
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(26, 35, 50, 0.6));
+        }
+
+        .service-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--accent-blue), #06b6d4);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .service-card.crashed .service-icon {
+            background: linear-gradient(135deg, var(--accent-red), #dc2626);
+        }
+
+        .service-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .service-description {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .status-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .status-light {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--accent-green);
+            box-shadow: 0 0 8px var(--accent-green);
+            transition: all 0.3s ease;
+            animation: pulse-healthy 2s infinite;
+        }
+
+        .status-light.loading {
+            background: var(--accent-yellow);
+            box-shadow: 0 0 8px var(--accent-yellow);
+            animation: pulse-loading 1s infinite;
+        }
+
+        .status-light.crashed {
+            background: var(--accent-red);
+            box-shadow: 0 0 8px var(--accent-red);
+            animation: none;
+        }
+
+        .status-text {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            flex: 1;
+        }
+
+        .status-indicator {
+            font-weight: 600;
+            color: var(--accent-green);
+            transition: color 0.3s ease;
+        }
+
+        .status-indicator.loading {
+            color: var(--accent-yellow);
+        }
+
+        .status-indicator.crashed {
+            color: var(--accent-red);
+        }
+
+        .api-call {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .api-status-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--accent-green);
+            font-size: 0.75rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .api-status-icon.loading {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--accent-yellow);
+            animation: spin 1s linear infinite;
+        }
+
+        .api-status-icon.success {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--accent-green);
+        }
+
+        .api-status-icon.failed {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--accent-red);
+        }
+
+        .control-section {
+            background: rgba(26, 35, 50, 0.8);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.8s ease-out 0.6s both;
+        }
+
+        .control-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--accent-blue);
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 1rem 1.5rem;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: transparent;
+            color: var(--text-primary);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: currentColor;
+            opacity: 0.1;
+            transition: left 0.3s ease;
+            z-index: -1;
+        }
+
+        .btn:hover::before {
+            left: 0;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            border-color: var(--accent-green);
+            color: var(--accent-green);
+        }
+
+        .btn-danger {
+            border-color: var(--accent-red);
+            color: var(--accent-red);
+        }
+
+        .btn-info {
+            border-color: var(--accent-blue);
+            color: var(--accent-blue);
+        }
+
+        .info-panel {
+            background: rgba(6, 182, 212, 0.1);
+            border-left: 4px solid var(--accent-blue);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .info-panel strong {
+            color: var(--accent-blue);
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse-healthy {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.6;
+            }
+        }
+
+        @keyframes pulse-loading {
+            0%, 100% {
+                box-shadow: 0 0 8px var(--accent-yellow);
+            }
+            50% {
+                box-shadow: 0 0 16px var(--accent-yellow);
+            }
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .comparison-section {
+                grid-template-columns: 1fr;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Cloud-Native Microservices Architecture</h1>
+            <p>Interactive Simulation: Event Management System</p>
+        </div>
+
+        <!-- Comparison Section -->
+        <div class="comparison-section">
+            <div class="comparison-card">
+                <h3>Monolithic Architecture</h3>
+                <ul>
+                    <li>Single codebase</li>
+                    <li>Tightly coupled</li>
+                    <li>Shared database</li>
+                    <li>Full system restart on updates</li>
+                    <li>Difficult to scale</li>
+                </ul>
+            </div>
+            <div class="comparison-card">
+                <h3>Microservices (This Demo)</h3>
+                <ul>
+                    <li>Independent services</li>
+                    <li>Loosely coupled</li>
+                    <li>Separate concerns</li>
+                    <li>Individual deployment</li>
+                    <li>Resilient & scalable</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Architecture Section -->
+        <div class="architecture-section">
+            <h2>🐳 Containerized Services (Docker)</h2>
+            
+            <div class="services-grid">
+                <!-- User Service -->
+                <div class="service-card" id="userService">
+                    <div class="service-icon">👤</div>
+                    <div class="service-name">User Service</div>
+                    <div class="service-description">Manages user authentication & profiles</div>
+                    
+                    <div class="status-container">
+                        <div class="status-light" id="userStatus"></div>
+                        <div class="status-text">
+                            Status: <span class="status-indicator" id="userStatusText">Healthy</span>
+                        </div>
+                    </div>
+
+                    <div class="api-call">
+                        <div class="api-status-icon" id="userApiIcon">✓</div>
+                        <span id="userApiText">Ready for requests</span>
+                    </div>
+                </div>
+
+                <!-- Event Service -->
+                <div class="service-card" id="eventService">
+                    <div class="service-icon">📅</div>
+                    <div class="service-name">Event Service</div>
+                    <div class="service-description">Manages events & reservations</div>
+                    
+                    <div class="status-container">
+                        <div class="status-light" id="eventStatus"></div>
+                        <div class="status-text">
+                            Status: <span class="status-indicator" id="eventStatusText">Healthy</span>
+                        </div>
+                    </div>
+
+                    <div class="api-call">
+                        <div class="api-status-icon" id="eventApiIcon">✓</div>
+                        <span id="eventApiText">Ready for requests</span>
+                    </div>
+                </div>
+
+                <!-- Task Assignment Service -->
+                <div class="service-card" id="taskService">
+                    <div class="service-icon">📋</div>
+                    <div class="service-name">Task Assignment Service</div>
+                    <div class="service-description">Assigns & tracks tasks</div>
+                    
+                    <div class="status-container">
+                        <div class="status-light" id="taskStatus"></div>
+                        <div class="status-text">
+                            Status: <span class="status-indicator" id="taskStatusText">Healthy</span>
+                        </div>
+                    </div>
+
+                    <div class="api-call">
+                        <div class="api-status-icon" id="taskApiIcon">✓</div>
+                        <span id="taskApiText">Ready for requests</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Control Section -->
+        <div class="control-section">
+            <div class="control-title">Interactive Demo Controls</div>
+            
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="simulateNormalLoad()">
+                    ▶ Normal Load
+                </button>
+                <button class="btn btn-danger" onclick="simulateCrash()">
+                    ⚠ Simulate Crash
+                </button>
+                <button class="btn btn-info" onclick="faultToleranceTest()">
+                    🛡 Fault Tolerance Test
+                </button>
+            </div>
+
+            <div class="info-panel" id="infoPanel">
+                <strong>Welcome!</strong> Click the buttons above to simulate different scenarios and see how the microservices architecture handles them.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simulation State
+        const state = {
+            taskServiceCrashed: false,
+            isLoading: false,
+            apiResponses: {
+                user: null,
+                event: null,
+                task: null
+            }
+        };
+
+        // Utility: Update Service Status
+        function updateServiceStatus(serviceName, status) {
+            const statusLight = document.getElementById(`${serviceName}Status`);
+            const statusText = document.getElementById(`${serviceName}StatusText`);
+            const apiIcon = document.getElementById(`${serviceName}ApiIcon`);
+            const apiText = document.getElementById(`${serviceName}ApiText`);
+            const card = document.getElementById(`${serviceName}Service`);
+
+            if (status === 'loading') {
+                statusLight.classList.add('loading');
+                statusLight.classList.remove('crashed');
+                statusText.classList.add('loading');
+                statusText.classList.remove('crashed');
+                statusText.textContent = 'Loading...';
+                apiIcon.classList.add('loading');
+                apiIcon.textContent = '⟳';
+                apiText.textContent = 'Fetching data...';
+                card.classList.add('active');
+            } else if (status === 'healthy') {
+                statusLight.classList.remove('loading', 'crashed');
+                statusText.classList.remove('loading', 'crashed');
+                statusText.textContent = 'Healthy';
+                apiIcon.classList.remove('loading', 'failed');
+                apiIcon.classList.add('success');
+                apiIcon.textContent = '✓';
+                apiText.textContent = 'Ready for requests';
+                card.classList.remove('crashed');
+            } else if (status === 'crashed') {
+                statusLight.classList.add('crashed');
+                statusLight.classList.remove('loading');
+                statusText.classList.add('crashed');
+                statusText.classList.remove('loading');
+                statusText.textContent = 'Offline';
+                apiIcon.classList.add('failed');
+                apiIcon.classList.remove('loading', 'success');
+                apiIcon.textContent = '✕';
+                apiText.textContent = 'Service unavailable';
+                card.classList.add('crashed');
+            }
+        }
+
+        // Simulate Normal Load
+        function simulateNormalLoad() {
+            if (state.isLoading) return;
+
+            state.isLoading = true;
+            state.taskServiceCrashed = false; // Reset crash state
+            resetAllServices();
+            updateInfoPanel('🔄 Initiating request to all services...');
+
+            // Set loading state for all services
+            updateServiceStatus('user', 'loading');
+            updateServiceStatus('event', 'loading');
+            updateServiceStatus('task', 'loading');
+
+            // Simulate API calls with random delays
+            setTimeout(() => {
+                updateServiceStatus('user', 'healthy');
+                updateInfoPanel('✓ User Service responded with user data (ID: U-12345)');
+                state.apiResponses.user = { id: 'U-12345', name: 'John Doe' };
+            }, 800);
+
+            setTimeout(() => {
+                updateServiceStatus('event', 'healthy');
+                updateInfoPanel('✓ Event Service responded with event data (8 upcoming events)');
+                state.apiResponses.event = { events: 8, nextEvent: 'Tech Conference 2024' };
+            }, 1200);
+
+            setTimeout(() => {
+                if (!state.taskServiceCrashed) {
+                    updateServiceStatus('task', 'healthy');
+                    updateInfoPanel('✓ Task Assignment Service responded (5 active tasks assigned)');
+                    state.apiResponses.task = { tasks: 5, status: 'active' };
+                    state.isLoading = false;
+                }
+            }, 1600);
+
+            setTimeout(() => {
+                if (!state.isLoading) {
+                    updateInfoPanel('✅ All services responded successfully! This demonstrates stateless, independent services communicating via REST APIs.');
+                }
+            }, 2000);
+        }
+
+        // Simulate Crash
+        function simulateCrash() {
+            state.taskServiceCrashed = true;
+            updateServiceStatus('task', 'crashed');
+            updateInfoPanel('⚠️  Task Assignment Service has crashed! Status: OFFLINE. Watch what happens when we request data from other services...');
+        }
+
+        // Fault Tolerance Test
+        function faultToleranceTest() {
+            if (state.isLoading) return;
+
+            if (!state.taskServiceCrashed) {
+                updateInfoPanel('⚠️ First, crash a service using the "Simulate Crash" button, then run this test.');
+                return;
+            }
+
+            state.isLoading = true;
+            updateInfoPanel('🛡️ Testing fault tolerance: Requesting data while Task Service is offline...');
+
+            // Set loading for healthy services only
+            updateServiceStatus('user', 'loading');
+            updateServiceStatus('event', 'loading');
+
+            setTimeout(() => {
+                updateServiceStatus('user', 'healthy');
+                updateInfoPanel('✓ User Service: Still responding perfectly! (Isolated failure - no impact)');
+            }, 900);
+
+            setTimeout(() => {
+                updateServiceStatus('event', 'healthy');
+                updateInfoPanel('✓ Event Service: Also responding! Task Service failure does NOT cascade.');
+            }, 1400);
+
+            setTimeout(() => {
+                updateInfoPanel('🎯 Fault Tolerance Demonstrated:\n✅ User Service: Healthy\n✅ Event Service: Healthy\n❌ Task Service: Offline (isolated)\n\nKey Insight: Services are loosely coupled. One failure doesn\'t bring down the entire system!');
+                state.isLoading = false;
+            }, 1800);
+        }
+
+        // Reset all services to healthy
+        function resetAllServices() {
+            updateServiceStatus('user', 'healthy');
+            updateServiceStatus('event', 'healthy');
+            updateServiceStatus('task', 'healthy');
+            state.taskServiceCrashed = false;
+        }
+
+        // Update info panel
+        function updateInfoPanel(message) {
+            document.getElementById('infoPanel').innerHTML = `<strong>Live Demo:</strong> ${message}`;
+        }
+
+        // Initialize
+        window.addEventListener('load', () => {
+            resetAllServices();
+        });
+    </script>
+</body>
+</html>
