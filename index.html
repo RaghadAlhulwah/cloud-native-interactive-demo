@@ -370,87 +370,72 @@
         }
 
         @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         @keyframes pulse-healthy {
-            0%, 100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.6;
-            }
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
         }
 
         @keyframes pulse-loading {
-            0%, 100% {
-                box-shadow: 0 0 8px var(--accent-yellow);
-            }
-            50% {
-                box-shadow: 0 0 16px var(--accent-yellow);
-            }
+            0%, 100% { box-shadow: 0 0 8px var(--accent-yellow); }
+            50% { box-shadow: 0 0 16px var(--accent-yellow); }
         }
 
         @keyframes spin {
-            from {
-                transform: rotate(0deg);
-            }
-            to {
-                transform: rotate(360deg);
-            }
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
 
         @media (max-width: 768px) {
-            .header h1 {
-                font-size: 1.8rem;
-            }
-
-            .comparison-section {
-                grid-template-columns: 1fr;
-            }
-
-            .services-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .button-group {
-                grid-template-columns: 1fr;
-            }
+            .header h1 { font-size: 1.8rem; }
+            .comparison-section { grid-template-columns: 1fr; }
+            .services-grid { grid-template-columns: 1fr; }
+            .button-group { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Header -->
         <div class="header">
             <h1>Cloud-Native Microservices Architecture</h1>
-            <p>Interactive Simulation: Event Management System</p>
+            <p>Interactive Simulation: E-Commerce System</p>
         </div>
 
-        <!-- Architecture Section -->
+        <div class="comparison-section">
+            <div class="comparison-card">
+                <h3>Monolithic Architecture</h3>
+                <ul>
+                    <li>Single codebase</li>
+                    <li>Tightly coupled</li>
+                    <li>Shared database</li>
+                    <li>Full system restart on updates</li>
+                    <li>Difficult to scale</li>
+                </ul>
+            </div>
+            <div class="comparison-card">
+                <h3>Microservices (This Demo)</h3>
+                <ul>
+                    <li>Independent services</li>
+                    <li>Loosely coupled</li>
+                    <li>Separate concerns</li>
+                    <li>Individual deployment</li>
+                    <li>Resilient & scalable</li>
+                </ul>
+            </div>
+        </div>
+
         <div class="architecture-section">
-            <h2>Containerized Services (Docker)</h2>
+            <h2>🐳 Containerized Services (Docker)</h2>
             
             <div class="services-grid">
-                <!-- User Service -->
                 <div class="service-card" id="userService">
                     <div class="service-icon">👤</div>
                     <div class="service-name">User Service</div>
@@ -469,56 +454,53 @@
                     </div>
                 </div>
 
-                <!-- Event Service -->
-                <div class="service-card" id="eventService">
-                    <div class="service-icon">📅</div>
-                    <div class="service-name">Event Service</div>
-                    <div class="service-description">Manages events & reservations</div>
+                <div class="service-card" id="productService">
+                    <div class="service-icon">📦</div>
+                    <div class="service-name">Product Service</div>
+                    <div class="service-description">Manages product catalog & inventory</div>
                     
                     <div class="status-container">
-                        <div class="status-light" id="eventStatus"></div>
+                        <div class="status-light" id="productStatus"></div>
                         <div class="status-text">
-                            Status: <span class="status-indicator" id="eventStatusText">Healthy</span>
+                            Status: <span class="status-indicator" id="productStatusText">Healthy</span>
                         </div>
                     </div>
 
                     <div class="api-call">
-                        <div class="api-status-icon" id="eventApiIcon">✓</div>
-                        <span id="eventApiText">Ready for requests</span>
+                        <div class="api-status-icon" id="productApiIcon">✓</div>
+                        <span id="productApiText">Ready for requests</span>
                     </div>
                 </div>
 
-                <!-- Task Assignment Service -->
-                <div class="service-card" id="taskService">
-                    <div class="service-icon">📋</div>
-                    <div class="service-name">Task Assignment Service</div>
-                    <div class="service-description">Assigns & tracks tasks</div>
+                <div class="service-card" id="orderService">
+                    <div class="service-icon">🛒</div>
+                    <div class="service-name">Order Service</div>
+                    <div class="service-description">Handles checkout & order processing</div>
                     
                     <div class="status-container">
-                        <div class="status-light" id="taskStatus"></div>
+                        <div class="status-light" id="orderStatus"></div>
                         <div class="status-text">
-                            Status: <span class="status-indicator" id="taskStatusText">Healthy</span>
+                            Status: <span class="status-indicator" id="orderStatusText">Healthy</span>
                         </div>
                     </div>
 
                     <div class="api-call">
-                        <div class="api-status-icon" id="taskApiIcon">✓</div>
-                        <span id="taskApiText">Ready for requests</span>
+                        <div class="api-status-icon" id="orderApiIcon">✓</div>
+                        <span id="orderApiText">Ready for requests</span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Control Section -->
         <div class="control-section">
             <div class="control-title">Interactive Demo Controls</div>
             
             <div class="button-group">
                 <button class="btn btn-primary" onclick="simulateNormalLoad()">
-                    ▶ Normal Load
+                    ▶ Normal API Request
                 </button>
                 <button class="btn btn-danger" onclick="simulateCrash()">
-                    ⚠ Simulate Crash
+                    ⚠ Simulate Order Crash
                 </button>
                 <button class="btn btn-info" onclick="faultToleranceTest()">
                     🛡 Fault Tolerance Test
@@ -534,12 +516,12 @@
     <script>
         // Simulation State
         const state = {
-            taskServiceCrashed: false,
+            orderServiceCrashed: false,
             isLoading: false,
             apiResponses: {
                 user: null,
-                event: null,
-                task: null
+                product: null,
+                order: null
             }
         };
 
@@ -589,13 +571,13 @@
             if (state.isLoading) return;
 
             state.isLoading = true;
-            state.taskServiceCrashed = false;
+            state.orderServiceCrashed = false;
             resetAllServices();
             updateInfoPanel('🔄 Initiating request to all services...');
 
             updateServiceStatus('user', 'loading');
-            updateServiceStatus('event', 'loading');
-            updateServiceStatus('task', 'loading');
+            updateServiceStatus('product', 'loading');
+            updateServiceStatus('order', 'loading');
 
             setTimeout(function() {
                 updateServiceStatus('user', 'healthy');
@@ -604,16 +586,16 @@
             }, 800);
 
             setTimeout(function() {
-                updateServiceStatus('event', 'healthy');
-                updateInfoPanel('✓ Event Service responded with event data (8 upcoming events)');
-                state.apiResponses.event = { events: 8, nextEvent: 'Tech Conference 2024' };
+                updateServiceStatus('product', 'healthy');
+                updateInfoPanel('✓ Product Service responded with catalog data (150 products available)');
+                state.apiResponses.product = { products: 150, featured: 'Wireless Headphones' };
             }, 1200);
 
             setTimeout(function() {
-                if (!state.taskServiceCrashed) {
-                    updateServiceStatus('task', 'healthy');
-                    updateInfoPanel('✓ Task Assignment Service responded (5 active tasks assigned)');
-                    state.apiResponses.task = { tasks: 5, status: 'active' };
+                if (!state.orderServiceCrashed) {
+                    updateServiceStatus('order', 'healthy');
+                    updateInfoPanel('✓ Order Service responded (5 active orders processing)');
+                    state.apiResponses.order = { orders: 5, status: 'active' };
                     state.isLoading = false;
                 }
             }, 1600);
@@ -627,25 +609,25 @@
 
         // Simulate Crash
         function simulateCrash() {
-            state.taskServiceCrashed = true;
-            updateServiceStatus('task', 'crashed');
-            updateInfoPanel('⚠️  Task Assignment Service has crashed! Status: OFFLINE. Watch what happens when we request data from other services...');
+            state.orderServiceCrashed = true;
+            updateServiceStatus('order', 'crashed');
+            updateInfoPanel('⚠️ Order Service has crashed! Status: OFFLINE. Watch what happens when we request data from other services...');
         }
 
         // Fault Tolerance Test
         function faultToleranceTest() {
             if (state.isLoading) return;
 
-            if (!state.taskServiceCrashed) {
-                updateInfoPanel('⚠️ First, crash a service using the "Simulate Crash" button, then run this test.');
+            if (!state.orderServiceCrashed) {
+                updateInfoPanel('⚠️ First, crash a service using the "Simulate Order Crash" button, then run this test.');
                 return;
             }
 
             state.isLoading = true;
-            updateInfoPanel('🛡️ Testing fault tolerance: Requesting data while Task Service is offline...');
+            updateInfoPanel('🛡️ Testing fault tolerance: Requesting data while Order Service is offline...');
 
             updateServiceStatus('user', 'loading');
-            updateServiceStatus('event', 'loading');
+            updateServiceStatus('product', 'loading');
 
             setTimeout(function() {
                 updateServiceStatus('user', 'healthy');
@@ -653,12 +635,12 @@
             }, 900);
 
             setTimeout(function() {
-                updateServiceStatus('event', 'healthy');
-                updateInfoPanel('✓ Event Service: Also responding! Task Service failure does NOT cascade.');
+                updateServiceStatus('product', 'healthy');
+                updateInfoPanel('✓ Product Service: Also responding! Order Service failure does NOT cascade.');
             }, 1400);
 
             setTimeout(function() {
-                updateInfoPanel('🎯 Fault Tolerance Demonstrated:\n✅ User Service: Healthy\n✅ Event Service: Healthy\n❌ Task Service: Offline (isolated)\n\nKey Insight: Services are loosely coupled. One failure doesn\'t bring down the entire system!');
+                updateInfoPanel('🎯 Fault Tolerance Demonstrated:\n✅ User Service: Healthy\n✅ Product Service: Healthy\n❌ Order Service: Offline (isolated)\n\nKey Insight: Users can still browse products and login, even if checkout is temporarily unavailable!');
                 state.isLoading = false;
             }, 1800);
         }
@@ -666,9 +648,9 @@
         // Reset all services to healthy
         function resetAllServices() {
             updateServiceStatus('user', 'healthy');
-            updateServiceStatus('event', 'healthy');
-            updateServiceStatus('task', 'healthy');
-            state.taskServiceCrashed = false;
+            updateServiceStatus('product', 'healthy');
+            updateServiceStatus('order', 'healthy');
+            state.orderServiceCrashed = false;
         }
 
         // Update info panel
